@@ -1,0 +1,12 @@
+{
+  "name": "tumblrina_v2",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+      "irc": "latest",
+      "request": "2.46.0",
+      "fs": "latest",
+      "mongodb": "latest",
+      "mongoose": "latest"
+  }
+}
