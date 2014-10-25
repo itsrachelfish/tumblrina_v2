@@ -6,25 +6,35 @@ var fs = require('fs');
 var irc = require('irc');
 var config = require('./config/config.js');
 var core = require('./core.js');
-var client = new irc.Client(config.connection.server, config.connection.userName, config.connection);
+var client = new irc.Client(config.irc.server, config.irc.userName, config.irc);
+var sqlite3 = require('sqlite3').verbose();
+var request = require('request');
+var async = require('async');
+var htmlStrip = require('htmlstrip-native');
 
 client.addListener('error', function(message) {
     console.log('error: ', message);
 });
 
-if(config.connection.antiGhost) {
-    core.log('INFO', 'Anti-ghosting enabled!');
+if(config.irc.antiGhost) {
+    core.log({level: 'INFO', text: 'Anti-ghosting enabled!'});
     client.once('registered', function(message) {
-        client.send('PRIVMSG', 'NickServ identify ' + config.connection.userName + ' ' + config.connection.antiGhostPassword);
-        client.send('PRIVMSG', 'NickServ ghost ' + config.connection.userName);
-        client.send('NICK', config.connection.userName);
+        client.send('PRIVMSG', 'NickServ identify ' + config.irc.userName + ' ' + config.irc.antiGhostPassword);
+        client.send('PRIVMSG', 'NickServ ghost ' + config.irc.userName);
+        client.send('NICK', config.irc.userName);
     });
 }
 
 core.client = client;
-core.log('INFO', 'Starting ' + config.connection.userName);
-core.log('INFO', '------------------------------------');
-core.log('INFO', 'Loading modules...');
+core.config = config;
+core.sqlite = sqlite3;
+core.request = request;
+core.async = async;
+core.htmlStrip = htmlStrip;
+
+core.log({level:'INFO', text: 'Starting ' + config.irc.userName});
+core.log({level: 'INFO', text: '------------------------------------'});
+core.log({level: 'INFO', text: 'Loading modules...'});
 fs.readdir('./modules', function(err, files) {
     files.forEach(function(file) {
         core.loadModule(file);

@@ -53,9 +53,9 @@ var admin = {
         if(admin.admins.indexOf(from) == -1) {
             return;
         }
-        admin.core.log('DEBUG', admin.name + ' - ' + from + ' -> ' + to + ': ' + text);
+        admin.core.log({level: 'DEBUG', text: admin.name + ' - ' + from + ' -> ' + to + ': ' + text});
         var parsed = admin.core.parseCommand(text);
-        admin.core.log('DEBUG', 'Command ' + parsed.command + ' -> ' + parsed.message);
+        admin.core.log({level: 'DEBUG', text: 'Command ' + parsed.command + ' -> ' + parsed.message});
         if(admin.commands.indexOf(parsed.command) > -1) {
             admin[parsed.command](from, to, parsed.message);
         }
@@ -70,11 +70,11 @@ var admin = {
             return;
         }
 
-        admin.core.log('INFO', 'Loaded ' + admin.name + ' module');
+        admin.core.log({level:'INFO', text: 'Loaded ' + admin.name + ' module'});
         admin.client.on('message', admin.onMessage);
     },
     unload: function() {
-        admin.core.log('INFO', 'Unloaded ' + admin.name + ' module');
+        admin.core.log({level: 'INFO', text: 'Unloaded ' + admin.name + ' module'});
         admin.client.removeListener('message', admin.onMessage);
     }
 }

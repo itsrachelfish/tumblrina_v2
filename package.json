@@ -6,7 +6,9 @@
       "irc": "latest",
       "request": "2.46.0",
       "fs": "latest",
-      "mongodb": "latest",
-      "mongoose": "latest"
+      "sqlite3": "latest",
+      "mongoose": "latest",
+      "async": "latest",
+      "htmlstrip-native": "latest"
   }
 }

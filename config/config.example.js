@@ -3,7 +3,7 @@
  */
 
 module.exports = {
-    connection: {
+    irc: {
         server: 'irc.freenode.net',
         userName: 'tumblrina_v2',
         port: 6667,
@@ -19,5 +19,9 @@ module.exports = {
         floodProtectionDelay: 1000,
         antiGhost: false,
         antiGhostPassword: ''
+    },
+    tumblr: {
+        apiKey: '',
+        secretSauce: ''
     }
 }
