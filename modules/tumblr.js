@@ -315,6 +315,7 @@ var tumblr = {
         },
         loadPosts: function() {
             tumblr.db.connection.each('select post_id from posts', function(err, row) {
+                if(err) return;
                 tumblr.postList.push(row.post_id);
             });
         },
