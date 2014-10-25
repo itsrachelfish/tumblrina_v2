@@ -32,3 +32,5 @@ node_modules
 .idea
 config/config.js
 tumblrina_v2.iml
+
+databases/
