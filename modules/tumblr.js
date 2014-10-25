@@ -51,18 +51,16 @@ var tumblr = {
     },
 
     reblog: function(reblogObject) {
-        return;
-        tumblr.core.request('http://api.tumblr.com/v2/blog/tootbot.tumblr.com/post/reblog', {
-            form: {
-                id: reblogObject.postID,
-                send_to_facebook: 'no',
-                api_key: tumblr.config.apiKey,
-                reblog_key: reblogObject.reblogKey,
-                state: 'published',
-                tweet: 'off',
-                format: reblogObject.format,
-                type: 'reblog'
-            }
+        var shittyClient = tumblr.core.shittyTumblr.createClient({
+            consumer_key: tumblr.config.consumerKey,
+            consumer_secret: tumblr.config.consumerSecret,
+            token: tumblr.config.token,
+            token_secret: tumblr.config.tokenSecret
+        });
+
+        shittyClient.reblog('tootbot.tumblr.com', { id: reblogObject.postID, reblog_key: reblogObject.reblogKey }, function (err, data) {
+            console.log(err);
+            console.log(data);
         });
     },
 

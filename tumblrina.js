@@ -11,6 +11,7 @@ var sqlite3 = require('sqlite3').verbose();
 var request = require('request');
 var async = require('async');
 var htmlStrip = require('htmlstrip-native');
+var shittyTumblr = require('tumblr.js');
 
 client.addListener('error', function(message) {
     console.log('error: ', message);
@@ -31,6 +32,7 @@ core.sqlite = sqlite3;
 core.request = request;
 core.async = async;
 core.htmlStrip = htmlStrip;
+core.shittyTumblr = shittyTumblr;
 
 core.log({level:'INFO', text: 'Starting ' + config.irc.userName});
 core.log({level: 'INFO', text: '------------------------------------'});

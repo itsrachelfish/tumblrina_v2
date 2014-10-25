@@ -9,6 +9,7 @@
       "sqlite3": "latest",
       "mongoose": "latest",
       "async": "latest",
-      "htmlstrip-native": "latest"
+      "htmlstrip-native": "latest",
+      "tumblr.js": "latest"
   }
 }
