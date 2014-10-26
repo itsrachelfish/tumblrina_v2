@@ -113,7 +113,7 @@ var tumblr = {
                             if(!foundPost) {
                                 if(params.image && post.type != 'photo') return;
                                 if(params.video && post.type != 'video') return;
-                                if(params.text && (post.type != 'text' || post.type != 'quote')) return;
+                                if(params.text && post.type != 'text') return;
                                 if(params.audio && post.type != 'audio') return;
 
                                 var sayString = '';
