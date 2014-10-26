@@ -44,7 +44,7 @@ var tumblr = {
             tumblr.search(queryString, params, tumblr.reblog)
         } else {
             timedOut = timedOut[0];
-            tumblr.client.say(timedOut.user, 'Sorry, you\'re still timed out for another ' +
+            tumblr.client.notice(timedOut.user, 'Sorry, you\'re still timed out for another ' +
                 (tumblr.config.timeout * 1000 - (tumblr.core.currentTime() - timedOut.started))/1000 +
                 ' seconds from when you searched for ' + timedOut.searchedFor);
         }
@@ -159,7 +159,12 @@ var tumblr = {
                 ], function(err, result) {
                     if(err) {
                         if(err == 'no-results') {
-                            if(++params.attempts == 5) {
+                            var checkes = 10;
+                            if(params.text) {
+                                checks = 50;
+                            }
+                            if(++params.attempts == checks) {
+                                tumblr.client.notice(params.from, 'Sorry, I couldn\'t find any results for ' + params.query + ' in ' + checks*20 + ' results.');
                                 console.error('Couldn\'t find result for url: ' + url + ' Params were: ' + JSON.stringify(params));
                                 tumblr.client.say('dbladez', 'Couldn\'t find result for url: ' + url);
                                 tumblr.client.say('dbladez', JSON.stringify(params));
