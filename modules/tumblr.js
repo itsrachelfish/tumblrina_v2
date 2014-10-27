@@ -10,6 +10,7 @@ var tumblr = {
     commands: ['tu'],
     timeouts: [],
     postList: [],
+    submissionsList: [],
     lastBlog: '',
 
     tu: function(from, to, message) {
@@ -251,17 +252,17 @@ var tumblr = {
                 'post_url text, ' +
                 'searched_by text, ' +
                 'query text, ' +
-                'search_time datetime default current_timestamp);')
+                'search_time datetime default current_timestamp);');
             tumblr.db.connection.run('create table if not exists post_tags(' +
                 'id integer primary key autoincrement not null,' +
                 'tag text,' +
-                'unique(tag));')
+                'unique(tag));');
             tumblr.db.connection.run('create table if not exists post_tag_relationships(' +
                 'id integer primary key autoincrement not null,' +
                 'post_id integer,' +
                 'tag_id integer,' +
                 'foreign key(post_id) references posts(id),' +
-                'foreign key(tag_id) references post_tags(id));')
+                'foreign key(tag_id) references post_tags(id));');
             tumblr.db.connection.run('create table if not exists banned_blogs(' +
                 'id integer primary key autoincrement not null,' +
                 'name text,' +
@@ -270,7 +271,38 @@ var tumblr = {
                 'unbanned_by text, ' +
                 'unbanned_time datetime, ' +
                 'updated_timestamp datetime default current_timestamp, ' +
-                'is_banned boolean default 1);')
+                'is_banned boolean default 1);');
+            tumblr.db.connection.run('create table if not exists submissions(' +
+                'id integer primary key autoincrement not null,' +
+                'post_id integer,' +
+                'asked_by text,' +
+                'asked_by_url text,' +
+                'question text,' +
+                'timestamp datetime);');
+        },
+        getSubmissionOffset: function() {
+            tumblr.db.connection.all('select post_id from submissions', function(err, rows) {
+                if(err) {
+                    console.error(err);
+                    return;
+                }
+                rows.forEach(function(row) {
+                    tumblr.submissionsList.push(row.post_id);
+                });
+            });
+        },
+        saveSubmission: function(submission) {
+            tumblr.submissionsList.push(submission.id);
+            var prep = tumblr.db.connection.prepare('insert into submissions(post_id, asked_by, asked_by_url, question, timestamp) ' +
+                'VALUES($post_id, $asked_by, $asked_by_url, $question, $timestamp);')
+            prep.run({
+                $post_id: submission.id,
+                $asked_by: submission.asking_name,
+                $asked_by_url: submission.asking_url,
+                $question: submission.question,
+                $timestamp: submission.timestamp
+            });
+            prep.finalize();
         },
         savePost: function(post) {
             var postID = 0;
@@ -328,6 +360,7 @@ var tumblr = {
             tumblr.db.connection = new tumblr.core.sqlite.Database('./databases/tumblr.sqlite3');
             tumblr.db.createSchema();
             tumblr.db.loadPosts();
+            tumblr.db.getSubmissionOffset();
         },
         stop: function() {
             tumblr.db.connection.close();
@@ -377,12 +410,61 @@ var tumblr = {
         tumblr.core.log({level: 'INFO', text: 'Loaded ' + tumblr.name + ' module'});
         tumblr.client.on('message', tumblr.onMessage);
         tumblr.db.start();
+        setTimeout(tumblr.listeners.start, 30000);
     },
 
     unload: function() {
         tumblr.core.log({level: 'INFO', text: 'Unloaded ' + tumblr.name + ' module'});
         tumblr.client.removeListener('message', tumblr.onMessage);
         tumblr.db.stop();
+        tumblr.listeners.stop();
+    },
+
+    listeners: {
+        submission: {
+            interval: null,
+            listener: function() {
+                var shittyClient = tumblr.core.shittyTumblr.createClient({
+                    consumer_key: tumblr.config.consumerKey,
+                    consumer_secret: tumblr.config.consumerSecret,
+                    token: tumblr.config.token,
+                    token_secret: tumblr.config.tokenSecret
+                });
+
+                shittyClient.submissions('tootbot.tumblr.com',
+                    function(err, data) {
+                        if(err) {
+                            console.error(err);
+                            return;
+                        }
+                        data.posts.forEach(function(submission) {
+                            if(tumblr.submissionsList.indexOf(submission.id) == -1) {
+                                tumblr.db.saveSubmission(submission);
+                                tumblr.config.ircChannels.forEach(function(channel) {
+                                    var message = '[New Tumblr Message] ' + submission.asking_name;
+                                    if(submission.asking_name != 'Anonymous') {
+                                        message += ' (http://' + submission.asking_name + '.tumblr.com)';
+                                    }
+                                    message += ' writes: ' + submission.question;
+                                    if(message.length > 400) {
+                                        message = message.substring(0, 400);
+                                    }
+                                    tumblr.client.say(channel, message);
+                                });
+                            }
+                        });
+                    }
+                );
+            }
+        },
+        start: function() {
+            tumblr.core.log({level: 'INFO', text:'Starting tumblr listeners'});
+            tumblr.listeners.submission.interval = setInterval(tumblr.listeners.submission.listener, 30000);
+        },
+        stop: function() {
+            tumblr.core.log({level: 'INFO', text:'Stopping tumblr listeners'});
+            clearInterval(tumblr.listeners.submission.interval);
+        }
     }
 }
 

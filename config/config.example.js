@@ -21,6 +21,7 @@ module.exports = {
         antiGhostPassword: ''
     },
     tumblr: {
+        ircChannels: ['##dbuttz2'],
         apiKey: '',
         secretSauce: ''
     }
