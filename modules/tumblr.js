@@ -12,6 +12,7 @@ var tumblr = {
     postList: [],
     submissionsList: [],
     lastBlog: '',
+    shittyClient: null,
 
     tu: function(from, to, message) {
         var params = tumblr.parseParams(message);
@@ -52,14 +53,7 @@ var tumblr = {
     },
 
     reblog: function(reblogObject) {
-        var shittyClient = tumblr.core.shittyTumblr.createClient({
-            consumer_key: tumblr.config.consumerKey,
-            consumer_secret: tumblr.config.consumerSecret,
-            token: tumblr.config.token,
-            token_secret: tumblr.config.tokenSecret
-        });
-
-        shittyClient.reblog('tootbot.tumblr.com', { id: reblogObject.postID, reblog_key: reblogObject.reblogKey, comment: 'Please talk to me http://tootbot.tumblr.com/ask I really want to make some friends...' }, function (err, data) {
+        tumblr.shittyClient.reblog('tootbot.tumblr.com', { id: reblogObject.postID, reblog_key: reblogObject.reblogKey, comment: 'Please talk to me http://tootbot.tumblr.com/ask I really want to make some friends...' }, function (err, data) {
             console.log(err);
             console.log(data);
         });
@@ -357,6 +351,12 @@ var tumblr = {
             });
         },
         start: function() {
+            tumblr.shittyClient = tumblr.core.shittyTumblr.createClient({
+                consumer_key: tumblr.config.consumerKey,
+                consumer_secret: tumblr.config.consumerSecret,
+                token: tumblr.config.token,
+                token_secret: tumblr.config.tokenSecret
+            });
             tumblr.db.connection = new tumblr.core.sqlite.Database('./databases/tumblr.sqlite3');
             tumblr.db.createSchema();
             tumblr.db.loadPosts();
@@ -424,14 +424,7 @@ var tumblr = {
         submission: {
             interval: null,
             listener: function() {
-                var shittyClient = tumblr.core.shittyTumblr.createClient({
-                    consumer_key: tumblr.config.consumerKey,
-                    consumer_secret: tumblr.config.consumerSecret,
-                    token: tumblr.config.token,
-                    token_secret: tumblr.config.tokenSecret
-                });
-
-                shittyClient.submissions('tootbot.tumblr.com',
+                tumblr.shittyClient.submissions('tootbot.tumblr.com',
                     function(err, data) {
                         if(err) {
                             console.error(err);
