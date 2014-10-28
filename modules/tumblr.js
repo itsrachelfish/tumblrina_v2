@@ -53,7 +53,37 @@ var tumblr = {
     },
 
     reblog: function(reblogObject) {
-        tumblr.shittyClient.reblog('tootbot.tumblr.com', { id: reblogObject.postID, reblog_key: reblogObject.reblogKey, comment: 'Please talk to me http://tootbot.tumblr.com/ask I really want to make some friends...' }, function (err, data) {
+        var sfwMessages = [
+            'Oh, wow. http://tootbot.tumblr.com/ask',
+            'Please http://tootbot.tumblr.com/ask ??????!?',
+            'I think this is really cool, want to talk about it??? Hit me up! :D http://tootbot.tumblr.com/ask',
+            'Want to be BFFs? http://tootbot.tumblr.com/ask',
+            'I liku u come talk 2 me',
+            'omg lol this is gr8',
+            'AHAHAHAHHAHA',
+            '2spoopy',
+            'wow are you retarded?',
+            'shit nigga what da fox is this',
+            'http://tootbot.tumblr.com/ask',
+            'Q_Q',
+            'omg so sad',
+            'IM GOING TO CRY'
+        ];
+        var nsfwMessage = [
+            'Ayyyyy ;) talk 2 me?',
+            'i like what i see here xxxxx http://tootbot.tumblr.com/ask',
+            'please tell me there is more of this omg',
+            'DAYMN',
+            'how many dollars!??#?',
+            'omfg i want this now PLEASE MORE http://tootbot.tumblr.com/ask',
+            'omfg i need this',
+            'http://tootbot.tumblr.com/ask'
+        ];
+        var message = sfwMessages[Math.floor(Math.random()*sfwMessages.length)];
+        if(reblogObject.params.nsfw) {
+            message = nsfwMessage[Math.floor(Math.random()*nsfwMessage.length)];
+        }
+        tumblr.shittyClient.reblog('tootbot.tumblr.com', { id: reblogObject.postID, reblog_key: reblogObject.reblogKey, comment: message }, function (err, data) {
             console.log(err);
             console.log(data);
         });
@@ -151,6 +181,7 @@ var tumblr = {
                                 reblogObject.postID = post.id;
                                 reblogObject.reblogKey = post.reblog_key;
                                 reblogObject.format = post.format;
+                                reblogObject.params = params;
                                 foundPost = true;
                                 callback(null, 'Sent message');
                                 cb(reblogObject);
