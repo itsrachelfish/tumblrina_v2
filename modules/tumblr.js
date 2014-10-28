@@ -184,7 +184,10 @@ var tumblr = {
                                 reblogObject.params = params;
                                 foundPost = true;
                                 callback(null, 'Sent message');
-                                cb(reblogObject);
+
+                                if(tumblr.config.allowReblog) {
+                                    cb(reblogObject);
+                                }
                             }
                         });
                         if(!foundPost) {
@@ -213,6 +216,7 @@ var tumblr = {
                 });
             } else {
                 tumblr.core.log({level: 'ERROR', text: err});
+                console.log(url);
                 tumblr.client.say('dbladez', 'Error when ' + params.from + ' searched. Params were: ' + JSON.stringify(params));
                 tumblr.client.say('dbladez', response.message);
             }
@@ -450,7 +454,8 @@ var tumblr = {
             console.log('[ERROR] ' + tumblr.name + ' module cannot load CLIENT');
             return;
         }
-
+        tumblr.config = tumblr.core.loadConfig('tumblr');
+        console.log(tumblr.config.timeout);
         tumblr.core.log({level: 'INFO', text: 'Loaded ' + tumblr.name + ' module'});
         tumblr.client.on('message', tumblr.onMessage);
         tumblr.db.start();
@@ -496,11 +501,15 @@ var tumblr = {
         },
         start: function() {
             tumblr.core.log({level: 'INFO', text:'Starting tumblr listeners'});
-            tumblr.listeners.submission.interval = setInterval(tumblr.listeners.submission.listener, 30000);
+            if(tumblr.config.allowAskInteraction) {
+                tumblr.listeners.submission.interval = setInterval(tumblr.listeners.submission.listener, 30000);
+            }
         },
         stop: function() {
             tumblr.core.log({level: 'INFO', text:'Stopping tumblr listeners'});
-            clearInterval(tumblr.listeners.submission.interval);
+            if(tumblr.config.allowAskInteraction) {
+                clearInterval(tumblr.listeners.submission.interval);
+            }
         }
     }
 }
@@ -509,7 +518,6 @@ module.exports = {
     load: function(client, core) {
         tumblr.core = core;
         tumblr.client = client;
-        tumblr.config = core.config.tumblr;
         tumblr.request = core.request;
         tumblr.load();
     },

@@ -1,0 +1,12 @@
+{
+    "ircChannels": ["##dbuttz2"],
+    "apiKey": "",
+    "secretSauce": "",
+    "timeout": 30,
+    "consumerKey": "",
+    "consumerSecret": "",
+    "token": "",
+    "tokenSecret": "",
+    "allowReblog": false,
+    "allowAskInteraction": false
+}

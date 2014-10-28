@@ -30,7 +30,7 @@ node_modules
 .lock-wscript
 
 .idea
-config/config.js
 tumblrina_v2.iml
-
-databases/
+databases/tumblr.sqlite3
+config/irc.json
+config/tumblr.json

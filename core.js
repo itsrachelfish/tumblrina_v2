@@ -4,8 +4,16 @@
 
 var core = {
     client: null,
-    modules: {},
+    modules: [],
+    configs: [],
 
+    loadConfig: function(name) {
+        var filePath = './config/' + name + '.json';
+        delete core.configs[name];
+        delete require.cache[require.resolve(filePath)];
+        core.configs[name] = require(filePath);
+        return core.configs[name];
+    },
     log: function(message) {
         console.log('[' + core.currentTime() + '][' + message.level + '] ' + message.text);
     },
@@ -32,7 +40,7 @@ var core = {
     parseCommand: function(rawCommand) {
         var command = rawCommand.split(' ').splice(0, 1).join(' ');
         var message = rawCommand.substring(command.length, rawCommand.length).trim();
-        if(command[0] == core.config.general.commandIdentifier) {
+        if(command[0] == '`') {
             return {command: command.substring(1, command.length), message: message};
         } else {
             return {command: '', message: ''};
