@@ -110,6 +110,15 @@ var tumblr = {
                                 if(params.video && post.type != 'video') return;
                                 if(params.text && post.type != 'text') return;
                                 if(params.audio && post.type != 'audio') return;
+                                if(params.nohomo) {
+                                    var nextPost = false;
+                                    post.tags.forEach(function(tag) {
+                                        if(['gay', 'homo', 'queer', 'fag', 'fairy'].indexOf(tag) > -1) {
+                                            nextPost = true;
+                                        }
+                                    });
+                                    if(nextPost) return;
+                                }
 
                                 var sayString = '';
                                 tumblr.lastBlog = post.blog_name;
@@ -191,6 +200,7 @@ var tumblr = {
             nsfw: false,
             ban: false,
             unban: false,
+            nohomo: false,
             query: '',
             firstAttempt: true,
             offset: 0,
@@ -228,6 +238,9 @@ var tumblr = {
             if(param == '-audio') {
                 params.audio = true;
                 params.text = false;
+            }
+            if(param == '-nohomo') {
+                params.nohomo = true;
             }
             message = message.replace(param, '');
         });
