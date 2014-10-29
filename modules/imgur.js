@@ -94,11 +94,17 @@ var imgur = {
                 ' seconds from when you searched for ' + timedOut.searchedFor);
         }
     },
+    randomString: function (length) {
+        var result = '';
+        var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_';
+        for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
+        return result;
+    },
     findRandom: function(to, from) {
-        var id = Math.random().toString(36).substr(2,6);
+        var id = imgur.randomString(5);
         var url = 'http://i.imgur.com/'+id+'.png'
         imgur.core.request(url, function(error, response, body) {
-            if(body.length < 1000000 || response.statusCode == 404) {
+            if(body.length < 50000 || response.statusCode == 404) {
                 imgur.findRandom(to, from);
                 return;
             }
