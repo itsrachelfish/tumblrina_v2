@@ -98,7 +98,7 @@ var imgur = {
         var id = Math.random().toString(36).substr(2,6);
         var url = 'http://i.imgur.com/'+id+'.png'
         imgur.core.request(url, function(error, response, body) {
-            if(body.length < 1500 || response.statusCode == 404) {
+            if(body.length < 1000000 || response.statusCode == 404) {
                 imgur.findRandom(to, from);
                 return;
             }
