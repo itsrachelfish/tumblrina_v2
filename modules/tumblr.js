@@ -197,7 +197,7 @@ var tumblr = {
                 ], function(err, result) {
                     if(err) {
                         if(err == 'no-results') {
-                            var checkes = 10;
+                            var checks = 10;
                             if(params.text) {
                                 checks = 50;
                             }
@@ -455,7 +455,6 @@ var tumblr = {
             return;
         }
         tumblr.config = tumblr.core.loadConfig('tumblr');
-        console.log(tumblr.config.timeout);
         tumblr.core.log({level: 'INFO', text: 'Loaded ' + tumblr.name + ' module'});
         tumblr.client.on('message', tumblr.onMessage);
         tumblr.db.start();
