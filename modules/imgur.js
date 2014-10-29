@@ -59,7 +59,7 @@ var imgur = {
                                 validItem = true;
                             });
                             if(validItem) {
-                                imgur.img(from, to, message, {});
+                                imgur.img(from, to, message, opts);
                             } else {
                                 if(++opts.page < 10) {
                                     imgur.img(from, to, message, opts);
