@@ -13,15 +13,17 @@ var imgur = {
 
     img: function(from, to, message, opts) {
         var timedOut = imgur.timeouts.filter(function(timeout) {return timeout.user == from;})
-        if(timedOut.length == 0 && !opts.retry) {
-            imgur.timeouts.push({
-                user: from,
-                started: imgur.core.currentTime(),
-                searchedFor: opts.query
-            });
-            setTimeout(function() {
-                imgur.timeouts = imgur.timeouts.filter(function(timeout) { return timeout.user != from; });
-            }, imgur.config.timeout * 1000);
+        if(timedOut.length == 0 || opts.retry) {
+            if(!opts.rety) {
+                imgur.timeouts.push({
+                    user: from,
+                    started: imgur.core.currentTime(),
+                    searchedFor: opts.query
+                });
+                setTimeout(function() {
+                    imgur.timeouts = imgur.timeouts.filter(function(timeout) { return timeout.user != from; });
+                }, imgur.config.timeout * 1000);
+            }
 
             if(opts.random) {
                 imgur.findRandom(to, from);
