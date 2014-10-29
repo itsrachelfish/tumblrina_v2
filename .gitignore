@@ -34,3 +34,4 @@ tumblrina_v2.iml
 databases/tumblr.sqlite3
 config/irc.json
 config/tumblr.json
+config/imgur.json
