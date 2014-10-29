@@ -13,7 +13,7 @@ var imgur = {
 
     img: function(from, to, message, opts) {
         var timedOut = imgur.timeouts.filter(function(timeout) {return timeout.user == from;})
-        if(timedOut.length == 0) {
+        if(timedOut.length == 0 && !opts.retry) {
             imgur.timeouts.push({
                 user: from,
                 started: imgur.core.currentTime(),
@@ -62,6 +62,7 @@ var imgur = {
                                 imgur.img(from, to, message, opts);
                             } else {
                                 if(++opts.page < 10) {
+                                    opts.rety = true;
                                     imgur.img(from, to, message, opts);
                                     return;
                                 }
@@ -97,7 +98,7 @@ var imgur = {
         var id = Math.random().toString(36).substr(2,6);
         var url = 'http://i.imgur.com/'+id+'.png'
         imgur.core.request(url, function(error, response, body) {
-            if(body.length == 492 || response.statusCode == 404) {
+            if(body.length < 1500 || response.statusCode == 404) {
                 imgur.findRandom(to, from);
                 return;
             }
@@ -138,7 +139,8 @@ var imgur = {
         var params = {
             reddit: 0,
             page: 0,
-            random: false
+            random: false,
+            retry: false
         };
         message.split(' ').forEach(function(param) {
             if(param[0] != '-') {
