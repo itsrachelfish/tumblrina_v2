@@ -19,7 +19,6 @@ var tumblr = {
         var params = tumblr.parseParams(message);
         params.from = from;
         params.to = to;
-        params.happyMode = tumblr.happyMode;
         if(from == 'dbladez') {
             if(params.ban && params.query != '') {
                 tumblr.db.banBlog(params.query, params.from);
