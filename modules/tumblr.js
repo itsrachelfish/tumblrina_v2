@@ -18,13 +18,15 @@ var tumblr = {
         var params = tumblr.parseParams(message);
         params.from = from;
         params.to = to;
-        if(params.ban && params.query != '') {
-            tumblr.db.banBlog(params.query, params.from);
-            return;
-        }
-        if(params.unban && params.query != '') {
-            tumblr.db.unbanBlog(params.query, params.from);
-            return;
+        if(from == 'dbladez') {
+            if(params.ban && params.query != '') {
+                tumblr.db.banBlog(params.query, params.from);
+                return;
+            }
+            if(params.unban && params.query != '') {
+                tumblr.db.unbanBlog(params.query, params.from);
+                return;
+            }
         }
         var queryString = 'http://api.tumblr.com/v2/mobile/search?reblog_info=true&api_key=' + tumblr.config.apiKey;
         if(tumblr.config.secretSauce != '' && params.nsfw) {
