@@ -13,11 +13,13 @@ var tumblr = {
     submissionsList: [],
     lastBlog: '',
     shittyClient: null,
+    happyMode: true,
 
     tu: function(from, to, message) {
         var params = tumblr.parseParams(message);
         params.from = from;
         params.to = to;
+        params.happyMode = tumblr.happyMode;
         if(from == 'dbladez') {
             if(params.ban && params.query != '') {
                 tumblr.db.banBlog(params.query, params.from);
@@ -25,6 +27,11 @@ var tumblr = {
             }
             if(params.unban && params.query != '') {
                 tumblr.db.unbanBlog(params.query, params.from);
+                return;
+            }
+            if(params.happyMode) {
+                tumblr.happyMode != tumblr.happyMode;
+                tumblr.client.say(to, 'Happy mode is ' + (tumblr.happyMode ? 'enabled' : 'disabled'));
                 return;
             }
         }
@@ -81,7 +88,34 @@ var tumblr = {
             'omfg i need this',
             'http://tootbot.tumblr.com/ask'
         ];
+        var sfwHappy = [
+            'Omg so cool',
+            'Wow this is great!',
+            'want to go pick FLOWERS together?',
+            'omg i luv puppies',
+            ':OOOOOOOOOO',
+            'pls reblogger',
+            ':):):)',
+            'OwO',
+            'wow',
+            '0_0',
+            'if you could pick a puppy what puppy would you pick',
+            'do you like kittens with mittens',
+            'i tried green eggs and ham once, it was okay.',
+            'this makes me have feelings that i cannot describe',
+            'http://tootbot.tumblr.com/ask',
+            'omg so sad',
+            'IM GOING TO CRY',
+            '2spoopy',
+            'Oh, wow. http://tootbot.tumblr.com/ask',
+            'Please http://tootbot.tumblr.com/ask ??????!?',
+            'I think this is really cool, want to talk about it??? Hit me up! :D http://tootbot.tumblr.com/ask',
+            'Want to be BFFs? http://tootbot.tumblr.com/ask'
+        ];
         var message = sfwMessages[Math.floor(Math.random()*sfwMessages.length)];
+        if(tumblr.happyMode) {
+            message = sfwHappy[Math.floor(Math.random()*sfwHappy.length)];
+        }
         if(reblogObject.params.nsfw) {
             message = nsfwMessage[Math.floor(Math.random()*nsfwMessage.length)];
         }
@@ -241,7 +275,8 @@ var tumblr = {
             query: '',
             firstAttempt: true,
             offset: 0,
-            attempts: 0
+            attempts: 0,
+            happyMode: false
         };
 
         message.split(' ').forEach(function(param) {
@@ -278,6 +313,9 @@ var tumblr = {
             }
             if(param == '-nohomo') {
                 params.nohomo = true;
+            }
+            if(param == '-happymode') {
+                params.happyMode = true;
             }
             message = message.replace(param, '');
         });
