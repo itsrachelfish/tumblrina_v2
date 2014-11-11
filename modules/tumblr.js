@@ -29,7 +29,7 @@ var tumblr = {
                 return;
             }
             if(params.happyMode) {
-                tumblr.happyMode != tumblr.happyMode;
+                tumblr.happyMode = !tumblr.happyMode;
                 tumblr.client.say(to, 'Happy mode is ' + (tumblr.happyMode ? 'enabled' : 'disabled'));
                 return;
             }
